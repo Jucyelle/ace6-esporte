@@ -11,7 +11,7 @@ import PrivateRoute from './PrivateRoute';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
-import PasswordRecovery from '../pages/PasswordRecovery'; // Importando a página de recuperação de senha
+import PasswordRecovery from '../pages/PasswordRecovery';
 
 
 const NotFound = () => {

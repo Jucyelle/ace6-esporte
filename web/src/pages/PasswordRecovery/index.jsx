@@ -1,77 +1,130 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'; 
+import { Button, Form, Input, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
 const PasswordRecovery = () => {
-  console.log("Página de recuperação de senha carregada");  
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const navigate = useNavigate();
- 
+    const [form] = Form.useForm();
+    const [passwordError, setPasswordError] = useState(null);
+    const [messageApi, contextHolder] = message.useMessage();
+    const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (password === confirmPassword && password.length > 0) {
-      // Simula a lógica de salvar a nova senha
-      alert("Senha alterada com sucesso!");
-      navigate("/login"); // Redireciona para a página de login após a alteração
-    } else if (password !== confirmPassword) {
-      alert("As senhas não coincidem.");
-    } else {
-      alert("Por favor, insira uma nova senha.");
-    }
-  };
+    const onFinish = async (values) => {
+        //chamar api de redefinir senha
+    };
 
-  return (
-    <div className="box">
-      <div className="group">
-        <h2 className="text-wrapper-2">Redefinir Senha</h2>
-        
-        <div className="form">
-          <div className="input-wrapper">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nova senha"
-            />
-            <span
-              className="eye-icon"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <FiEye /> : <FiEyeOff />}
-            </span>
-          </div>
-          <label className="input-label">Insira a nova senha</label>
-        </div>
+    const passwordValidator = (_, value) => {
+        const errors = [];
 
-        <div className="form">
-          <div className="input-wrapper">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirme a nova senha"
-            />
-            <span
-              className="eye-icon"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? <FiEye /> : <FiEyeOff />}
-            </span>
-          </div>
-          <label className="input-label">Confirme a nova senha</label>
-        </div>
+        if (value === undefined || value === '') {
+            errors.push('Por favor, insira sua nova senha.');
+        }
+        else {
+            if (value.length < 8) {
+                errors.push('Mínimo 8 caracteres.');
+            }
 
-        <div className="overlap-group">
-          <button className="small-button" onClick={handleSubmit}>
-            Salvar Alterações
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+            if (!/[A-Z]/.test(value)) {
+                errors.push('Pelo menos uma letra maiúscula.');
+            }
+
+            if (!/\d/.test(value)) {
+                errors.push('Pelo menos um número.');
+            }
+
+            if (!/[@$!%*?&#]/.test(value)) {
+                errors.push('Pelo menos um caractere especial.');
+            }
+        }
+
+        if (errors.length > 0) {
+            setPasswordError(errors);
+            return Promise.reject();
+        }
+
+        setPasswordError(null);
+        return Promise.resolve();
+    };
+
+    return (
+        <main>
+            <div className='generalPage'>
+                <div className='templateAside'>
+                    {/* inserir a imagem e logo */}
+                </div>
+                <div className='recoverPasswordForm'>
+                    {contextHolder}
+                    <div className='formContainer'>
+                        <p id='recoverPasswordTitle'>Alterar senha</p>
+                        <Form
+                            name="recover_password"
+                            className="recover-password-form"
+                            onFinish={onFinish}
+                            size='large'
+                            layout='vertical'
+                        >
+                            <Form.Item
+                                name="password"
+                                label="Nova senha"
+                                required
+                                rules={[
+                                    {
+                                        validator: passwordValidator,
+                                    }
+                                ]}
+                                hasFeedback
+                                help={passwordError && (
+                                    <span style={{ whiteSpace: 'pre-line' }}>
+                                        {passwordError.join('\n')}
+                                    </span>
+                                )}
+                                validateStatus={passwordError ? 'error' : ''}
+                            >
+                                <Input.Password />
+                            </Form.Item>
+                            <Form.Item
+                                name="confirm"
+                                label="Confirme a nova senha"
+                                dependencies={['password']}
+                                hasFeedback
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Por favor, confirme sua nova senha.',
+                                    },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('As senhas não correspondem.'));
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <Input.Password />
+                            </Form.Item>
+                            <Form.Item
+                                style={{
+                                    marginBottom: 0
+                                }}
+                            >
+                                <Button 
+                                    type="primary"
+                                    htmlType="submit" 
+                                    className="recover-password-form-button"
+                                    style={{ marginTop: '10px' }}
+                                    block
+                                >
+                                    Salvar alterações
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    )
+}
 
 export default PasswordRecovery;

@@ -1,155 +1,22 @@
-.input-label {
-    position: absolute;
-    top: 283px;
-    left: 668px;
-    width: 87px;
-    height: 23px;
-}
-.group-child {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background: linear-gradient(180deg, #0095da 24.5%, rgba(0, 149, 218, 0));
-    width: 420px;
-    height: 720px;
-}
-.verso-beta {
-    position: absolute;
-    top: 686px;
-    left: 17px;
-    line-height: 19.6px;
-    display: inline-block;
-    width: 84px;
-    height: 20px;
-}
-.templateaside {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 420px;
-    height: 720px;
-}
-.forgot-password-4 {
-    width: 100%;
-    position: relative;
-    background-color: #fff;
-    height: 720px;
-    overflow: hidden;
-    text-align: left;
-    font-size: 14px;
-    color: #fff;
-    font-family: Inter;
+.generalPage {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
 }
 
-.fi-bs-eye-crossed-icon {
-    position: absolute;
-    top: 19px;
-    left: 277px;
-    width: 24px;
-    height: 24px;
-    overflow: hidden;
-}
-.placeholder1 {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    left: 0%;
-    line-height: 22.4px;
-    display: inline-block;
-}
-.placeholder {
-    position: absolute;
-    top: 19px;
-    left: 19px;
-    width: 158px;
-    height: 23px;
-}
-.form {
-    position: absolute;
-    height: 13.41%;
-    width: 86.96%;
-    top: 31.22%;
-    right: 13.04%;
-    bottom: 55.37%;
-    left: 0%;
-    border-radius: 4px;
-    border: 1px solid #bdbdbd;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-.label {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    line-height: 22.4px;
-}
-.input-label {
-    position: absolute;
-    top: 100px;
-    left: 0px;
-    width: 87px;
-    height: 23px;
-}
-.input {
-    position: absolute;
-    height: 13.41%;
-    width: 86.96%;
-    top: 59.27%;
-    right: 13.04%;
-    bottom: 27.32%;
-    left: 0%;
-    border-radius: 4px;
-    border: 1px solid #bdbdbd;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-.input-label1 {
-    position: absolute;
-    top: 215px;
-    left: 0px;
-    width: 87px;
-    height: 23px;
-}
-.button-sample {
-    position: absolute;
-    top: calc(50% - 9.5px);
-    left: calc(50% - 51px);
-    line-height: 19.6px;
-}
-.small-button {
-    position: absolute;
-    top: 355px;
-    left: 0px;
-    border-radius: 8px;
-    background-color: #0095da;
-    width: 320px;
-    height: 55px;
-    font-size: 14px;
-    color: #fff;
-}
-.salvar-alteraes {
-    position: absolute;
-    top: calc(50% + 167px);
-    left: calc(50% - 90px);
-    line-height: 19.6px;
-    color: #fff;
-}
-.redefinir-senha {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    font-size: 48px;
-    line-height: 61.6px;
-    color: #333;
-}
-.form-parent {
-    width: 100%;
-    position: relative;
-    height: 410px;
-    text-align: left;
-    font-size: 16px;
-    color: #4f4f4f;
-    font-family: Inter;
+.templateAside {
+    background-color: #0095DA;
+    flex: 2;
 }
 
+.recoverPasswordForm {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formContainer {
+    width: 323px;
+    height: auto;
+}
