@@ -67,3 +67,61 @@ export const createUser = async (name, email, password, identity, student_regist
         }
     }
 }
+
+export const sendPasswordRecoveryCode = async (email) => {
+    try {
+        const response = await api.post('send-password-recovery-code', {
+            email: email
+        });
+        return response;
+    } catch (error) {
+        if (error.request.status === 404) {
+            throw Error('Usuário não encontrado.');
+        }
+        else {
+            throw Error('Ocorreu um erro ao enviar o código. Tente novamente.');
+        }  
+    }
+}
+
+export const verifyRecoveryCode = async (email, recovery_code) => {
+    try {
+        const response = await api.post('verify-recovery-code', {
+            email: email,
+            recovery_code: recovery_code
+        });
+        console.log(response)
+        return response;
+    } catch (error) {
+        if (error.request.status === 404) {
+            throw Error('Código de recuperação não encontrado para este e-mail.');
+        }
+        else if (error.request.status === 400) {
+            throw Error('Código inválido ou expirado.');
+        }
+        else {
+            throw Error('Ocorreu um erro ao validar o código. Tente novamente.');
+        }  
+    }
+}
+
+export const resetPassword = async (token, new_password, confirm_password) => {
+    try {
+        const response = await api.post('reset-password', {
+            token: token,
+            new_password: new_password,
+            confirm_password: confirm_password
+        });
+        return response;
+    } catch (error) {
+        if (error.request.status === 401) {
+            throw Error('Token inválido.');
+        }
+        else if (error.request.status === 400) {
+            throw Error('As senhas não correspondem.');
+        }
+        else {
+            throw Error('Ocorreu um erro ao redefinir a senha. Tente novamente.');
+        }  
+    }
+}

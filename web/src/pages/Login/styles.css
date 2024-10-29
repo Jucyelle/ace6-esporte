@@ -30,8 +30,8 @@
     color: #939393 !important;
 }
 
-.modalForgotPassword {
-    width: 363px !important;
+.modalForgotPassword, .modalConfirmPassword {
+    width: 380px !important;
 }
 
 .modal-header {
@@ -74,9 +74,9 @@
     margin: 0;
 }
 
-.modalForgotPassword p {
+.modalForgotPassword p, .modalConfirmPassword p {
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 15px;
     font-size: 16px;
 }
 
@@ -85,6 +85,6 @@
     justify-content: center;
 }
 
-.modalForgotPassword .ant-btn-primary {
+.modalForgotPassword .ant-btn-primary, .modalConfirmPassword .ant-btn-primary {
     width: 100%;
 }

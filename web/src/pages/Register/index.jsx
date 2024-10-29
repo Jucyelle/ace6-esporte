@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Radio, Row, Col, message } from 'antd';
 import { createUser } from '../../../services/api';
 import './styles.css';
@@ -16,6 +17,10 @@ const Register = () => {
         if (e.target.value === 0) {
             form.setFieldsValue({ student_registration: null });
         }
+    };
+
+    const handleRedirectToLogin = () => {
+        navigate('/login');
     };
 
     const onFinish = async (values) => {
@@ -206,6 +211,12 @@ const Register = () => {
                                     textAlign: 'right'
                                 }}
                             >
+                                <Button
+                                    shape="circle"
+                                    className="home-form-button"
+                                    icon={<ArrowLeftOutlined />}
+                                    onClick={handleRedirectToLogin}
+                                />
                                 <Button 
                                     type="primary"
                                     htmlType="submit" 

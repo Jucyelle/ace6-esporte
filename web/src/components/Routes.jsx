@@ -8,9 +8,11 @@ import {
 import { Result, Button } from 'antd';
 
 import PrivateRoute from './PrivateRoute';
-import Home from '../pages/Home'
+import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
+import PasswordRecovery from '../pages/PasswordRecovery';
+
 
 const NotFound = () => {
     const navigate = useNavigate();
@@ -33,6 +35,7 @@ const RoutesPaths = () => (
             <Route path="/" element={<PrivateRoute element={Home} />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/registrar" element={<Register />}/>
+            <Route path="/recuperar-senha" element={<PasswordRecovery />}/> 
             <Route path="*" element={<NotFound />} />
         </Routes>
     </Router>
