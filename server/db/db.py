@@ -1,5 +1,6 @@
 import sqlite3
 from typing import Optional
+from datetime import datetime, timedelta
 from server.models.response_models import UserResponse
 from server.enums.user_roles import UserRole
 from server.enums.user_identities import UserIdentity
@@ -26,6 +27,14 @@ class DBConnection:
             self.db_connection.commit()
         else:
             print("Users table already exists.")
+
+        if not self._check_table_exists(cursor, "PasswordRecoveryCodes"):
+            print("PasswordRecoveryCodes table does not exist. Creating...")
+            self._create_table(cursor, "PasswordRecoveryCodes", self._password_recovery_codes_table_schema())
+
+            self.db_connection.commit()
+        else:
+            print("PasswordRecoveryCodes table already exists.")
         
         cursor.close()
     
@@ -53,6 +62,13 @@ class DBConnection:
             student_registration TEXT UNIQUE,
             CONSTRAINT users_email_unique UNIQUE (email),
             CONSTRAINT student_registration_unique UNIQUE (student_registration)
+        """
+    
+    def _password_recovery_codes_table_schema(self) -> str:
+        return """
+            email TEXT PRIMARY KEY,
+            recovery_code INTEGER NOT NULL,
+            expires_at TIMESTAMP NOT NULL
         """
     
     def insert_user(self, name: str, email: str, hashed_password: str, identity: UserIdentity, student_registration: Optional[str] = None, role: UserRole = UserRole.USER) -> UserResponse:
@@ -179,5 +195,67 @@ class DBConnection:
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")
             raise ValueError("An error occurred while updating the user's active status")
+        finally:
+            cursor.close()
+
+    def store_recovery_code(self, email: str, recovery_code: int):
+        cursor = self.db_connection.cursor()
+        expires_at = datetime.now() + timedelta(minutes=10)  # Código expira em 10 minutos
+        
+        try:
+            cursor.execute(
+                """
+                INSERT INTO PasswordRecoveryCodes (email, recovery_code, expires_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(email) DO UPDATE SET 
+                    recovery_code = excluded.recovery_code,
+                    expires_at = excluded.expires_at;
+                """,
+                (email, recovery_code, expires_at)
+            )
+            self.db_connection.commit()
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
+            raise ValueError("An error occurred while storing recovery code")
+    
+    def get_recovery_code(self, email: str):
+        cursor = self.db_connection.cursor()
+
+        try:
+            cursor.execute(
+                """
+                SELECT email, recovery_code, expires_at FROM PasswordRecoveryCodes
+                WHERE email = ?
+                """,
+                (email,)
+            )
+            recovery_code_data = cursor.fetchone()
+
+            if recovery_code_data:
+                email, recovery_code, expires_at = recovery_code_data
+                return recovery_code, expires_at
+            else:
+                return None
+        except sqlite3.Error as e:
+            print(f"Database error occurred: {e}")
+            raise ValueError("An error occurred while fetching recovery code")
+    
+    def get_all_recovery_codes(self):
+        cursor = self.db_connection.cursor()
+        try:
+            print("Fetching all recovery codes...")
+            cursor.execute(
+                """
+                SELECT email, recovery_code, expires_at
+                FROM PasswordRecoveryCodes
+                """
+            )
+            rows = cursor.fetchall()
+
+            print(f"Recovery codes fetched: {rows}")
+            return rows
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            raise ValueError("An error occurred while fetching recovery codes.")
         finally:
             cursor.close()

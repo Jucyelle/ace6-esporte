@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Flex, Form, Input, Modal, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../../services/api';
+import { login, sendPasswordRecoveryCode, verifyRecoveryCode } from '../../../services/api';
 import { validateEmailInput } from '../../utils/ValidateUtils';
 import './styles.css';
 
@@ -33,7 +33,7 @@ const Login = () => {
         navigate('/registrar');
     };
 
-    const handleRequestNewPassword = () => {
+    const handleRequestNewPassword = async () => {
         const validationMessage = validateEmailInput(email);
     
         if (validationMessage) {
@@ -42,25 +42,54 @@ const Login = () => {
                 content: validationMessage,
             });
         } else {
-            setEmail('');
-            setModalForgotPasswordOpen(false);
-            setModalConfirmOpen(true);
+            try {
+                const result = await sendPasswordRecoveryCode(email);
+                if (result.status === 200) {
+                    messageApi.open({
+                        type: 'success',
+                        content: 'Código enviado com sucesso!',
+                    });
+
+                    setModalForgotPasswordOpen(false);
+                    setModalConfirmOpen(true);
+                }
+            } catch (error) {
+                messageApi.open({
+                    type: 'error',
+                    content: error.message,
+                });
+            }
         }
     };
 
-    const handleVerificationSubmit = () => {
-        if (verificationCode) {
-            messageApi.open({
-                type: 'success',
-                content: 'Código verificado com sucesso!',
-            });
-            setVerificationCode('');
-            setModalConfirmOpen(false);
-            navigate('/recuperar-senha');
-        } else {
+    const handleVerificationSubmit = async () => {
+        if (!verificationCode) {
             messageApi.open({
                 type: 'error',
                 content: 'Por favor, insira o código de verificação.',
+            });
+
+            return;
+        }
+
+        try {
+            const result = await verifyRecoveryCode(email, verificationCode);
+            
+            if (result.status === 200) {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Código verificado com sucesso!',
+                });
+                
+                setModalConfirmOpen(false);
+
+                const token = result.data.reset_token;
+                navigate(`/recuperar-senha?token=${token}`);
+            }
+        } catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: error.message,
             });
         }
     };
@@ -137,13 +166,18 @@ const Login = () => {
                                 <Modal
                                     className='modalForgotPassword'
                                     centered
+                                    maskClosable={false}
+                                    keyboard={false}
                                     open={modalForgotPasswordOpen}
                                     footer={[
                                         <Button size='large' key="submit" type="primary" onClick={handleRequestNewPassword}>
                                             Solicitar nova senha
                                         </Button>
                                     ]}
-                                    onCancel={() => setModalForgotPasswordOpen(false)}
+                                    onCancel={() => {
+                                        setModalForgotPasswordOpen(false);
+                                        setEmail('');
+                                    }}
                                 >
                                     <div className="modal-header">
                                         <div className="icon-container">
@@ -174,7 +208,10 @@ const Login = () => {
                                             Verificar código
                                         </Button>
                                     ]}
-                                    onCancel={() => setModalConfirmOpen(false)}
+                                    onCancel={() => {
+                                        setModalConfirmOpen(false);
+                                        setEmail('');
+                                    }}
                                 >
                                     <div className="modal-header">
                                         <div className="icon-container">

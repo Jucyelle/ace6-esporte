@@ -1,16 +1,49 @@
 import React, { useState } from 'react'; 
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { resetPassword } from '../../../services/api';
 import './styles.css';
 
 const PasswordRecovery = () => {
-    const [form] = Form.useForm();
     const [passwordError, setPasswordError] = useState(null);
     const [messageApi, contextHolder] = message.useMessage();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get("token");
+
+    const handleRedirectToLogin = () => {
+        navigate('/login');
+    };
 
     const onFinish = async (values) => {
-        //chamar api de redefinir senha
+        if (!token) {
+            messageApi.open({
+                type: 'error',
+                content: 'Token de recuperação inválido ou ausente.',
+            });
+            return;
+        }
+
+        try {
+            const result = await resetPassword(token, values.password, values.confirm);
+
+            if (result.status === 200) {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Senha redefinida com sucesso!',
+                });
+                
+                navigate('/login');
+            }
+        } catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: error.message,
+            });
+        }
     };
 
     const passwordValidator = (_, value) => {
@@ -106,15 +139,21 @@ const PasswordRecovery = () => {
                             </Form.Item>
                             <Form.Item
                                 style={{
-                                    marginBottom: 0
+                                    marginBottom: 0,
+                                    textAlign: 'right'
                                 }}
                             >
+                                <Button
+                                    shape="circle"
+                                    className="home-form-button"
+                                    icon={<ArrowLeftOutlined />}
+                                    onClick={handleRedirectToLogin}
+                                />
                                 <Button 
                                     type="primary"
                                     htmlType="submit" 
                                     className="recover-password-form-button"
                                     style={{ marginTop: '10px' }}
-                                    block
                                 >
                                     Salvar alterações
                                 </Button>

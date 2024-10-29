@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 from ..enums.user_roles import UserRole
 from ..enums.user_identities import UserIdentity
@@ -27,10 +28,22 @@ class LoginRequest(BaseModel):
     password: str
 
 class PasswordUpdateRequest(BaseModel):
-    email: str
+    token: str
     new_password: str
     confirm_password: str
 
 class StatusUpdateRequest(BaseModel):
     id: int
     active: bool
+
+class PasswordRecoveryRequest(BaseModel):
+    email: str
+
+class VerifyCodeRequest(BaseModel):
+    email: str
+    recovery_code: int
+
+class RecoveryCodeResponse(BaseModel):
+    email: str
+    recovery_code: int
+    expires_at: datetime

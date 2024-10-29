@@ -19,3 +19,7 @@
 .registerContainer {
     max-width: 534px;
 }
+
+.home-form-button {
+    margin-right: 10px;
+}
