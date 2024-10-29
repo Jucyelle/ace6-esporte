@@ -14,7 +14,7 @@ code {
     monospace;
 }
 
-#loginTitle, #registerTitle {
+#loginTitle, #registerTitle, #recoverPasswordTitle {
   font-size: 48px;
   font-weight: 700;
   color: #333333;
