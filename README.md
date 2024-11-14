@@ -5,6 +5,9 @@ Este projeto surge como resposta aos desafios crescentes relacionados à saúde 
 
 O projeto reconhece a importância de abordagens holísticas que consideram não apenas o bem-estar individual, mas também o impacto ambiental das práticas adotadas. Nesse sentido, busca preencher essa lacuna ao integrar inovações que unem a promoção da saúde à responsabilidade ambiental, incorporando práticas sustentáveis para reduzir significativamente o consumo de papel durante a coleta e análise de dados.
 
+## 📲 Protótipo
+
+[Protótipo - Esporte na Universidade](https://www.figma.com/proto/MBU80VoDEcw0vp7L6VVy9z/Esporte-na-universidade?node-id=0-1&t=WfLXvVisPMIreu8g-1)
 
 ## 🚀 Começando
 
