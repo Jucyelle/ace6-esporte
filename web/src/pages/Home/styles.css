@@ -1,0 +1,42 @@
+.generalPage {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.sideBar {
+    background-color: #0095DA;
+    flex: 2;
+    width: 233px;
+    height: 100vh; 
+    position: fixed; 
+    top: 0;
+    left: 0; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    padding-top: 20px;
+    border-radius: 0px 8px 8px 0px;
+    z-index: 100; 
+}
+
+.avatarContainer {
+    text-align: center; 
+    margin-top: 82px;
+    margin-bottom: 20px;
+}
+
+.avatarText {
+    color: #FFFFFF; 
+    margin-top: 10px; 
+    font-size: 20px;
+}
+
+.ant-menu-inline {
+    width: 100%;
+}
+
+.homePage {
+    flex: 4;
+    display: flex;
+}
