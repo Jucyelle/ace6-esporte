@@ -12,7 +12,8 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import PasswordRecovery from '../pages/PasswordRecovery';
-
+import Settings from '../pages/Settings';
+import Members from '../pages/Members';
 
 const NotFound = () => {
     const navigate = useNavigate();
@@ -29,13 +30,31 @@ const NotFound = () => {
     );
 };
 
+const AccessDenied = () => {
+    const navigate = useNavigate();
+  
+    return (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <Result
+                status="403"
+                title="403"
+                subTitle="Desculpe, você não tem acesso a esta página."
+                extra={<Button size="large" type="primary" onClick={() => navigate('/')}>Tela de Início</Button>}
+            />
+        </div>
+    );
+};
+
 const RoutesPaths = () => (
     <Router>
         <Routes>
             <Route path="/" element={<PrivateRoute element={Home} />}/>
+            <Route path="/configuracoes" element={<PrivateRoute element={Settings} />}/>
+            <Route path="/gerenciar-membros" element={<PrivateRoute element={Members} />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/registrar" element={<Register />}/>
             <Route path="/recuperar-senha" element={<PasswordRecovery />}/> 
+            <Route path="/acesso-negado" element={<AccessDenied />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     </Router>

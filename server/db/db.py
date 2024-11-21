@@ -198,6 +198,45 @@ class DBConnection:
         finally:
             cursor.close()
 
+    def update_user_role(self, user_id: int, role: id) -> None:
+        cursor = self.db_connection.cursor()
+        try:
+            cursor.execute(
+                """
+                UPDATE Users
+                SET role = ?
+                WHERE id = ?
+                """,
+                (role, user_id)
+            )
+            if cursor.rowcount == 0:
+                raise ValueError("User not found")
+            self.db_connection.commit()
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
+            raise ValueError("An error occurred while updating the user's role")
+        finally:
+            cursor.close()
+
+    def delete_user(self, user_id: int) -> None:
+        cursor = self.db_connection.cursor()
+        try:
+            cursor.execute(
+                """
+                DELETE FROM Users
+                WHERE id = ?
+                """,
+                (user_id,)
+            )
+            if cursor.rowcount == 0:
+                raise ValueError("User not found")
+            self.db_connection.commit()
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
+            raise ValueError("An error occurred while deleting the user")
+        finally:
+            cursor.close()
+
     def store_recovery_code(self, email: str, recovery_code: int):
         cursor = self.db_connection.cursor()
         expires_at = datetime.now() + timedelta(minutes=10)  # Código expira em 10 minutos
