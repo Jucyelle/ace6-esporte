@@ -21,3 +21,13 @@ code {
   margin-top: 0;
   margin-bottom: 30px;
 }
+
+.homePage, .settingsPage, .membersPage {
+  padding: 20px 30px;
+  background-color: #fff;
+}
+
+.ant-table-thead >tr>th {
+  color: #FFF !important;
+  background: #0095DA !important;
+}
