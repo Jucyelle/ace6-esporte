@@ -1,145 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import { Avatar, Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import {HomeOutlined, BellOutlined, SettingOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons'; 
+import React, { useState } from 'react';
+import { DownOutlined, PlusOutlined, QuestionOutlined } from '@ant-design/icons';
+import { Layout, FloatButton, Input, Row, Col, Flex, Button, Table, Tooltip, Dropdown, Space } from 'antd';
+import SidebarMenu from '../../components/SidebarMenu';
 import './styles.css';
 
+const { Sider } = Layout;
+const { Search } = Input;
+
+const items = [
+    {
+      label: 'Mais recente',
+      key: '1',
+    },
+    {
+      label: 'Mais antigo',
+      key: '2',
+    },
+];
+
 const Home = () => {
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
-  const [selectedKey, setSelectedKey] = useState('1'); 
-  const [userName, setUserName] = useState(localStorage.getItem('userName') || 'Usuário'); 
-  const navigate = useNavigate();
+    const [buttonOrderText, setButtonOrderText] = useState('Mais recente');
+    const today = new Date();
 
-  useEffect(() => {
-    const handleResize = () => {
-      setViewportHeight(window.innerHeight);
+    const formatDate = (date) => {
+        const day = date.getDate();
+        const month = date.toLocaleString('pt-BR', { month: 'long' });
+        const year = date.getFullYear();
+        return `${day} de ${month}, ${year}`;
     };
 
-    const handleStorageChange = () => {
-      setUserName(localStorage.getItem('userName') || 'Usuário');
+    const handleMenuDateClick = (e) => {
+        const selectedItem = items.find(item => item.key === e.key);
+        if (selectedItem) {
+            setButtonOrderText(selectedItem.label);
+        }
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('storage', handleStorageChange);
+    const menuProps = {
+        items,
+        onClick: handleMenuDateClick,
     };
-  }, []);
-    
-  const handleClick = (e) => {
-    setSelectedKey(e.key);
-    console.log('click ', e);
-    if (e.key === "logout") {
-      localStorage.removeItem('userName');
-      navigate('/login');
-    }
-  };
 
-  return (
-    <main>
-      <div className='generalPage'>
-        <div className='sideBar'>
-          <div className='avatarContainer'>
-            <Avatar style={{ 
-              backgroundColor: '#E0E0E0', 
-              color: '#333333',
-              }}
-              size= {63}
-              icon={<UserOutlined />}
-            />
-
-            <p className='avatarText'>
-              <strong>Olá,</strong> {userName}
-            </p>
-          </div>
-
-          <Menu
-            onClick={handleClick} 
-            style={{ width: 233, backgroundColor: '#0095DA' }}
-            selectedKeys={[selectedKey]} 
-            mode='inline'
-          >
-            <Menu.Item 
-              key='Home' 
-              style={{ 
-                backgroundColor: selectedKey === '1' ? '#00AEFF' : '', 
-                color: '#FFFFFF',
-                borderRadius: 0, 
-                margin: 0,
-                width: 233,
-                height: 50
-              }}
+    return (
+        <Layout
+            style={{
+                minHeight: '100vh',
+            }}
+        >
+            <Sider
+                width={233}
+                style={{ backgroundColor: '#fff' }}
             >
-              <HomeOutlined />  
-              <span>Início</span>
-            </Menu.Item>
+                <SidebarMenu atualPage='home' />
+            </Sider>
 
-            <Menu.Item 
-              key='Notification'
-              style={{ 
-                backgroundColor: selectedKey === '2' ? '#00AEFF' : '', 
-                color: '#FFFFFF',
-                borderRadius: 0, 
-                margin: 0, 
-                width: 233,
-                height: 50
-              }}
-            >
-              <BellOutlined />  
-              <span>Notificações</span>
-            </Menu.Item>
+            <Layout className='homePage'>
+                <p style={{ fontSize: '16px' }}>Hoje é dia <b>{formatDate(today)}</b></p>
 
-            <div style={{
-              width: 215, 
-              borderBottom: '1px solid rgba(255, 255, 255, 0.28)',
-              marginLeft: 8,
-              marginRight: 8,
-              }}>
-            </div>
+                <Row 
+                    justify="space-between" 
+                    align="middle"
+                    style={{ marginTop: '30px' }}
+                >
+                    <Col span={4}>
+                        <Search
+                            size="large"
+                            placeholder="Buscar"
+                            allowClear
+                            style={{
+                                width: 260,
+                            }}
+                        />
+                    </Col>
+                    <Col span={12}>
+                        <Flex gap="middle" align="center" justify="flex-end">
+                        <Dropdown menu={menuProps}>
+                            <Button
+                                size='large'
+                            >
+                                <Space>
+                                    {buttonOrderText}
+                                    <DownOutlined />
+                                </Space>
+                            </Button>
+                        </Dropdown>
 
-            <Menu.Item 
-              key='Setting'
-              style={{
-                backgroundColor: selectedKey === '3' ? '#00AEFF' : '', 
-                color: '#FFFFFF',
-                borderRadius: 0, 
-                margin: 0, 
-                width: 233,
-                height: 50
-              }}
-            >
-              <SettingOutlined />  
-              <span>Configurações</span>
-            </Menu.Item>
+                            <Tooltip placement="left" title="Cadastrar participante">
+                                <Button type="primary" shape="circle" size="large" icon={<PlusOutlined />} />
+                            </Tooltip>
+                        </Flex>
+                    </Col>
+                </Row>
+            </Layout>
             
-            <Menu.Item 
-              key='logout'
-              style={{
-                backgroundColor: selectedKey === 'logout' ? '#00AEFF' : '', 
-                color: '#FFFFFF',
-                borderRadius: 0, 
-                margin: 0, 
-                width: 233,
-                height: 50,
-                position: 'absolute',
-                bottom: 50
-              }}
-            >
-              <LogoutOutlined />  
-              <span>Sair</span>
-            </Menu.Item>
-          </Menu>
-        </div>
-
-        <div className='homePage'>
-          {/* Conteúdo da homePage */}
-        </div>
-
-      </div>
-    </main>
-  )
+            <FloatButton icon={<QuestionOutlined />} tooltip={<div>Documentação</div>} type="primary" style={{ insetInlineEnd: 30 }} />
+        </Layout>
+    )
 }
 
 export default Home;

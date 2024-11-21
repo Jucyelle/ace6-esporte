@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 
 from .models.user import User
 from .models.password_recovery_code import PasswordRecoveryCode
-from .models.response_models import StatusUpdateRequest, UserCreate, UserResponse, LoginRequest, PasswordUpdateRequest, PasswordRecoveryRequest, VerifyCodeRequest, RecoveryCodeResponse
+from .models.response_models import StatusUpdateRequest, UserCreate, UserResponse, LoginRequest, PasswordUpdateRequest, PasswordRecoveryRequest, VerifyCodeRequest, RecoveryCodeResponse, GetUserRequest, RoleUpdateRequest, DeleteUserRequest
 
 from .enums.user_roles import UserRole
 from .enums.user_identities import UserIdentity
@@ -34,6 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Lembrar de trocar isso quando for pra produção, o repositório no GitHub está público
 SECRET_KEY = "4864cb4857a68e3a5d57af391a92d5644ecfa64569dea322fa7192c61489cba9"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -62,7 +63,7 @@ def verify_token(token: str):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token",
             )
-        return {"detail": "Token is valid!"}
+        return {"detail": "Token is valid!", "user_email": email}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -149,6 +150,19 @@ def get_all_users(response: Response):
 
     return {"detail": "Users found with success!", "users": users}
 
+@app.post("/get-user", status_code=status.HTTP_200_OK)
+def get_user(request: GetUserRequest, response: Response):
+    try: 
+        user = db_connection.get_user_by_email(request.email)
+        if user:
+            return {"detail": "User found with success!", "user": user}
+        else:
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return {"detail": "No user found"}
+    except ValueError as e:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {"detail": str(e)}
+
 @app.post("/login", status_code=status.HTTP_200_OK)
 def login(request: LoginRequest, response: Response):
     try: 
@@ -193,6 +207,16 @@ def update_user_status(request: StatusUpdateRequest, response: Response):
     try:
         db_connection.update_user_active_status(request.id, request.active)
         return {"detail": f"User with ID {request.id} updated successfully the activity for {request.active}"}
+    except ValueError as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"detail": str(e)}
+    
+@app.post("/update-user-role", status_code=status.HTTP_200_OK)
+def update_user_role(request: RoleUpdateRequest, response: Response):
+    try:
+        role_enum = UserRole(request.role)
+        db_connection.update_user_role(request.id, request.role)
+        return {"detail": f"User with ID {request.id} updated successfully the role for {role_enum.name}"}
     except ValueError as e:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"detail": str(e)}
@@ -265,3 +289,12 @@ def get_all_recovery_codes(response: Response):
         )
 
     return {"detail": "Recovery codes found with success!", "codes": codes}
+
+@app.post("/delete-user", status_code=status.HTTP_200_OK)
+def delete_user(request: DeleteUserRequest, response: Response):
+    try:
+        db_connection.delete_user(request.id)
+        return {"detail": f"User with ID {request.id} deleted successfully"}
+    except ValueError as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"detail": str(e)}

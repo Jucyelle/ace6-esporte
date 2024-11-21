@@ -36,12 +36,12 @@ export const verifyToken = async (token) => {
         });
 
         if (response.status === 200) {
-            return true;
+            return { isValid: true, userEmail: response.data.user_email };
         } else {
-            return false;
+            return { isValid: false, userEmail: null };
         }
     } catch (error) {
-        return false;
+        return { isValid: false, userEmail: null };
     }
 }
 
@@ -123,5 +123,69 @@ export const resetPassword = async (token, new_password, confirm_password) => {
         else {
             throw Error('Ocorreu um erro ao redefinir a senha. Tente novamente.');
         }  
+    }
+}
+
+export const getUserByEmail = async (email) => {
+    try {
+        const response = await api.post('get-user', {
+            email: email
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error.request.status === 404) {
+            throw Error('Usuário não encontrado.');
+        }
+        else {
+            throw Error('Ocorreu um erro ao buscar usuário. Tente novamente.');
+        }  
+    }
+}
+
+export const getAllUsers = async () => {
+    try {
+        const response = await api.get('/users');
+        return response.data.users;
+    } catch (error) {
+        throw Error('Ocorreu um erro ao buscar os usuários. Tente novamente.');
+    }
+}
+
+export const updateUserRole = async (id, role) => {
+    try {
+        const response = await api.post('update-user-role', {
+            id: id,
+            role: role
+        });
+
+        return response;
+    } catch (error) {
+        throw Error('Ocorreu um erro ao atualizar o tipo do usuário. Tente novamente.');
+    }
+}
+
+export const updateUserStatus = async (id, active) => {
+    try {
+        const response = await api.post('update-user-status', {
+            id: id,
+            active: active
+        });
+
+        return response;
+    } catch (error) {
+        throw Error('Ocorreu um erro ao atualizar o status do usuário. Tente novamente.');
+    }
+}
+
+export const deleteUser = async (id) => {
+    try {
+        const response = await api.post('delete-user', {
+            id: id
+        });
+
+        return response;
+    } catch (error) {
+        throw Error('Ocorreu um erro ao deletar o usuário. Tente novamente.');
     }
 }

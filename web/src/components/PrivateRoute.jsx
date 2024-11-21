@@ -10,11 +10,19 @@ const PrivateRoute = ({ element: Component }) => {
     useEffect(() => {
         const checkToken = async () => {
             if (token) {
-                const validToken = await verifyToken(token);
-                setIsAuthenticated(validToken);
+                const { isValid, userEmail } = await verifyToken(token);
+                setIsAuthenticated(isValid);
+
+                if (isValid && userEmail) {
+                    localStorage.setItem('userEmail', userEmail);
+                } else {
+                    localStorage.removeItem('userEmail');
+                }
             } else {
                 setIsAuthenticated(false);
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userRole');
             }
         };
         checkToken();

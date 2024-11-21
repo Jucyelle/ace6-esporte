@@ -36,6 +36,10 @@ class StatusUpdateRequest(BaseModel):
     id: int
     active: bool
 
+class RoleUpdateRequest(BaseModel):
+    id: int
+    role: int
+
 class PasswordRecoveryRequest(BaseModel):
     email: str
 
@@ -47,3 +51,9 @@ class RecoveryCodeResponse(BaseModel):
     email: str
     recovery_code: int
     expires_at: datetime
+
+class GetUserRequest(BaseModel):
+    email: str
+
+class DeleteUserRequest(BaseModel):
+    id: int
